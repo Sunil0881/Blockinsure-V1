@@ -4,7 +4,7 @@ import Policy from "../src/pages/client/Policy";
 import Claim from "../src/pages/client/Claim";
 
 import AdminHome from "../src/pages/admin/AdminHome";
-import Transaction from "../src/pages/admin/Transaction";
+
 
 function App() {
   return (
@@ -15,7 +15,7 @@ function App() {
               <Route path="/claim" element={<Claim />} />
 
               <Route path="/admin" element={<AdminHome />} />
-              <Route path="/transaction" element={<Transaction />} />
+              
             </Routes>
      </Router>
 

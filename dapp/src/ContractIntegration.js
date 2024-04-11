@@ -1,5 +1,5 @@
 
-import ABI from "../src/abi/Ins.json";
+import ABI from "../src/abi/abi.json";
 import { ethers } from "ethers";
 import Web3 from "web3";
 import { BigNumber } from "ethers";
@@ -139,7 +139,7 @@ export const GETUSERPOLICIES =async () => {
     
         const signer = provider.getSigner();
         const Role = new ethers.Contract(INSURE_CONTRACT, ABI, signer);
-        const answer = await Role.getUserPolicies(userAddress);
+        const answer = await Role.getUserPolicies();
         console.log(answer);
         return answer;
     } catch (error) {
