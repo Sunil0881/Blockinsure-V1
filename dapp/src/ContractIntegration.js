@@ -2,9 +2,11 @@
 import ABI from "../src/abi/abi.json";
 import { ethers } from "ethers";
 import Web3 from "web3";
-import { BigNumber } from "ethers";
 
-const INSURE_CONTRACT = "0xD6C9E67eC6c2D00E2C54DF7e328e7F8652b1e80b";
+
+
+
+const INSURE_CONTRACT = "0x47354b68E7357bcB193e491f4764Dde6092de397";
 // 0xD6C9E67eC6c2D00E2C54DF7e328e7F8652b1e80b
 const isBrowser = () => typeof window !== "undefined";
 const { ethereum } = isBrowser();
@@ -14,10 +16,11 @@ if (ethereum) {
   isBrowser().web3 = new Web3(isBrowser().web3.currentProvider);
 }
 
+
  
 
 export const ADDPOLICY = async (_id, _policyName, _policyDetails, _coverageAmount, _premiumAmount, _durationYears) => {
-   
+   console.log(_id, _policyName, _policyDetails, _coverageAmount, _premiumAmount, _durationYears);
     try {
         // Validate input values
         if (!_id || !_policyName || !_policyDetails || !_coverageAmount || !_premiumAmount || !_durationYears) {
@@ -30,11 +33,8 @@ export const ADDPOLICY = async (_id, _policyName, _policyDetails, _coverageAmoun
                 : ethers.providers.getDefaultProvider();
 
         const signer = provider.getSigner();
-        const coverageAmountBigNumber = BigNumber.from(_coverageAmount);
-        const premiumAmountBigNumber = BigNumber.from(_premiumAmount);
-        const durationYearsBigNumber = BigNumber.from(_durationYears);
         const Role = new ethers.Contract(INSURE_CONTRACT, ABI, signer);
-        const tokenId = await Role.addPolicy(_id, _policyName, _policyDetails, coverageAmountBigNumber, premiumAmountBigNumber, durationYearsBigNumber);
+        const tokenId = await Role.addPolicy(_id, _policyName, _policyDetails, _coverageAmount, _premiumAmount, _durationYears);
         alert('POLICY ADDED successfully!');
         return tokenId;
     } catch (error) {
@@ -64,10 +64,8 @@ export const GETALLPOLICIES =async () => {
 }
 
 
-export const BUYPOLICY = async (id, { value: premiumWei }) => {
-   
+export const BUYPOLICY = async (_policyId, { value: premiumWei }) => {
     try {
-
         const provider =
             window.ethereum != null
                 ? new ethers.providers.Web3Provider(window.ethereum)
@@ -75,13 +73,16 @@ export const BUYPOLICY = async (id, { value: premiumWei }) => {
 
         const signer = provider.getSigner();
         const Role = new ethers.Contract(INSURE_CONTRACT, ABI, signer);
-        const tokenId = await Role.buyPolicy(id, { value: premiumWei });
+        console.log("entering");
+        const tokenId = await Role.buyPolicy(_policyId, { value: premiumWei });
         alert('POLICY Bought successfully!!');
         return tokenId;
     } catch (error) {
         console.error('Error Buying Policy:', error);
+        throw error; // Rethrow the error to propagate it to the caller
     }
-}
+};
+
 
 
 
@@ -127,7 +128,8 @@ export const WITHDRAW = async (amount) => {
 }
 
 
-export const GETUSERPOLICIES =async () => {
+export const GETUSERPOLICIES =async (_user) => {
+    
     try {
         // const provider = new ethers.providers.JsonRpcProvider(
         //     "https://sepolia.infura.io/v3/290819ba5ca344eea8990cb5ccaa8e6a"
@@ -139,10 +141,12 @@ export const GETUSERPOLICIES =async () => {
     
         const signer = provider.getSigner();
         const Role = new ethers.Contract(INSURE_CONTRACT, ABI, signer);
-        const answer = await Role.getUserPolicies();
-        console.log(answer);
+        const answer = await Role.getUserPolicies(_user);
+        
         return answer;
     } catch (error) {
         console.error('Error fetching Policies:', error);
     }
 }
+
+

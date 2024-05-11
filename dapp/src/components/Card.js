@@ -8,10 +8,12 @@ const Cards = () => {
   const [entries, setEntries] = useState([]);
 
 
-  const handleBuyPolicy = async (id, premium) => {
+  const handleBuyPolicy = async (_policyId, premium) => {
       try {
-          const premiumWei = ethers.utils.parseEther(premium.toString()); // Convert premium to Wei
-          const tokenId = await BUYPOLICY(id, { value: premiumWei }); // Send premium amount in Wei with the transaction
+          console.log('Premium:', premium);
+          const premiumWei = ethers.utils.parseEther(premium).toString();
+          console.log('Premium:', premiumWei);
+          const tokenId = await BUYPOLICY(_policyId, {value: premiumWei }); // Send premium amount in Wei with the transaction
           console.log(tokenId);
 
       } catch (error) {
@@ -22,23 +24,26 @@ const Cards = () => {
 
 
   const get = async () => {
-      console.log("getting value");
-      const answer = await GETALLPOLICIES();
-      if (Array.isArray(answer)) {
-          const formattedEntries = answer.map(entry => ({
-              Id: entry[0].toString(), // Convert BigNumber to string
-              Name: entry[1],
-              Detail: entry[2],
-              Coverage: entry[3].toString(), // Convert BigNumber to string
-              Premium: entry[4].toString(), // Convert BigNumber to string
-              Duration: entry[5].toString(), // Convert BigNumber to string
-              IsActive: entry[6]
-          }));
-          setEntries(formattedEntries);
-      } else {
-          console.error('Invalid answer format:', answer);
-      }
-  };
+    console.log("getting value");
+    const answer = await GETALLPOLICIES();
+    if (Array.isArray(answer)) {
+        const formattedEntries = answer.map(entry => ({
+            Id: entry[0].toString(), // Convert BigNumber to string
+            Name: entry[1],
+            Detail: entry[2],
+            Coverage: ethers.utils.formatEther(entry[3]), // Convert Gwei to ethers
+            Premium: ethers.utils.formatEther(entry[4]), // Convert Gwei to ethers
+            Duration: entry[5].toString(), // Convert BigNumber to string
+            IsActive: entry[6]
+        }));
+        console.log(formattedEntries); // Log the formatted entries to check the result
+        setEntries(formattedEntries);
+    } else {
+        console.error('Invalid answer format:', answer);
+    }
+};
+
+
   
   useEffect(() => {
       get();
@@ -65,10 +70,10 @@ const Cards = () => {
         </p>
         <div className='w-2/5 flex-col justify-between items-center'>
           <div className='flex'>
-            <h4 className='w-1/2 font-bold'>Coverage amount</h4> : <h4 className='ml-10 w-1/2'>{entry.Coverage}</h4>
+            <h4 className='w-1/2 font-bold'>Coverage amount</h4> : <h4 className='ml-10 w-1/2'>{entry.Coverage} ethers</h4>
           </div>
           <div className='flex'>
-            <h4 className='w-1/2 font-bold '>Premium</h4> : <h4 className='ml-10 w-1/2'>{entry.Premium} / month</h4>
+            <h4 className='w-1/2 font-bold '>Premium</h4> : <h4 className='ml-10 w-1/2'>{entry.Premium} ethers/ month</h4>
           </div>
           <div className='flex'>
             <h4 className='w-1/2 font-bold'>Duration years</h4> : <h4 className='ml-10 w-1/2'>{entry.Duration}</h4>

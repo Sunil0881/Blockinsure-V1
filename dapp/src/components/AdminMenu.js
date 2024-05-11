@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { ethers } from 'ethers';
 import DashboardIcon from "../assets/dashboard.png";
 import ApproveIcon from "../assets/approve.png";
 import Pie from "../assets/pie.png";
@@ -30,12 +31,12 @@ const ApproveContent = () => {
 
 const AddPolicyContent = () => {
 
-    const [policyName, setPolicyName] = useState('');
-    const [id, setId] = useState('');
-    const [policyDetails, setPolicyDetails] = useState('');
-    const [coverageAmount, setCoverageAmount] = useState(0);
-    const [premiumAmount, setPremiumAmount] = useState(0);
-    const [durationYears, setDurationYears] = useState(0);
+  const [policyName, setPolicyName] = useState('');
+  const [id, setId] = useState('');
+  const [policyDetails, setPolicyDetails] = useState('');
+  const [coverageAmount, setCoverageAmount] = useState(0);
+  const [premiumAmount, setPremiumAmount] = useState(0);
+  const [durationYears, setDurationYears] = useState(0);
   
     const handleNameChange = (event) => {
       setPolicyName(event.target.value);
@@ -51,11 +52,12 @@ const AddPolicyContent = () => {
   
     const handleCoverageChange = (event) => {
       setCoverageAmount(event.target.value);
-    };
+  };
   
     const handlePremiumChange = (event) => {
-      setPremiumAmount(event.target.value);
-    };
+     setPremiumAmount(event.target.value);
+  };
+
   
     const handleDurationChange = (event) => {
       setDurationYears(event.target.value);
@@ -64,16 +66,17 @@ const AddPolicyContent = () => {
     const handleSubmit = async (event) => {
       event.preventDefault();
       alert("button clicked");
-      const tokenId = await ADDPOLICY( id, policyName, policyDetails, coverageAmount, premiumAmount, durationYears ); // Pass parameters as an object
+      const _coverageAmount = ethers.utils.parseEther(coverageAmount).toString();
+      const _premiumAmount = ethers.utils.parseEther(premiumAmount).toString();
+      const tokenId = await ADDPOLICY(id, policyName, policyDetails, _coverageAmount, _premiumAmount, durationYears);
       console.log("id", id);
       console.log("name", policyName);
-      console.log("msg",  policyDetails);
-      console.log("msg", coverageAmount);
-      console.log("msg", premiumAmount);
-      console.log("msg",  durationYears );
+      console.log("msg", policyDetails);
+      console.log("msg", coverageAmount.toString());
+      console.log("msg", premiumAmount.toString());
+      console.log("msg", durationYears);
       console.log("tokenID:", tokenId);
-    };
-
+  };
     
     return(
 <div className='mb-16'>
